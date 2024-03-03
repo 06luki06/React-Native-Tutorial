@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, TextInput, Alert, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, Alert, FlatList, TouchableOpacity } from 'react-native';
 // using for Android - SafeAreaView within 'react-native' only works for iOS
 import { SafeAreaView } from 'react-native-safe-area-context'; 
 
@@ -7,38 +8,63 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const DATA = [
   {
     'id': '1',
-    title: 'Mediation'
+    title: 'Mediation',
+    completed: false
   },
   {
     'id': '2',
-    title: 'Coding'
+    title: 'Coding',
+    completed: false
   },
   {
     'id': '3',
-    title: 'Journaling'
+    title: 'Journaling',
+    completed: false
   }
 ]
 
-const TodoItem = (props) => (
-  <View style={styles.item}>
-    <Text style={styles.itemText}>{props.item.title}</Text>
-  </View>
-)
-
 // functional component
 export default function App() {
+  const [items, setItems] = useState(DATA);
+  const [text, setText] = useState("");
+  
+  //function to add new one
+  const addNewToDo = () => {
+    let newTodo = {
+      id: items.length + 1,
+      title: text,
+      completed: false
+    }
+
+    setItems([...items, newTodo]); // wrapping into new array for immutability
+    setText(""); // clear the input field
+  }
+
+  const markItemCompleted = (item) => {
+    const itemIdx = items.findIndex(currItem => currItem.id === item.id);
+    if(itemIdx !== -1){
+      const updatedItems = [...items];
+      updatedItems[itemIdx] = {...items[itemIdx], completed: true};
+      setItems(updatedItems);
+    }
+  }
+
+  const TodoItem = (props) => (
+    <TouchableOpacity style={styles.item} onPress={() => markItemCompleted(props.item)}>
+      <Text style={props.item.completed ? styles.itemTextCompleted : styles.itemText}>{props.item.title}</Text>
+    </TouchableOpacity>
+  )
+
   return (
-    // this matches with styles in line 15
-    // and container in line 16
     // SafeAreaView is a wrapper for the view - to have the content go under the status bar
     <SafeAreaView style={styles.container}>
       <Text>Open up App.js to start working on your app!</Text>
       <StatusBar style="auto" />
-      <TextInput style={styles.input}/>
-      <Button title='Start' onPress={() => Alert.alert('Simple Button pressed')}/>
+      <TextInput style={styles.input} onChangeText={setText} value={text}/>
+      <Button title='Add Todo' onPress={addNewToDo}/>
       <FlatList
       style={styles.list}
-        data={DATA}
+        data={items}
         renderItem={({item}) => <TodoItem item={item}/>}
         keyExtractor={item => item.id}
       />
@@ -72,5 +98,9 @@ const styles = StyleSheet.create({
   },
   itemText:{
     color: '#FFFF'
+  },
+  itemTextCompleted:{
+    color: '#FFFF',
+    textDecorationLine: 'line-through'
   }
 });
