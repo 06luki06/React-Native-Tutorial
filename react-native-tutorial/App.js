@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, TextInput, Alert, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, Alert, Modal, FlatList, TouchableOpacity } from 'react-native';
 // using for Android - SafeAreaView within 'react-native' only works for iOS
 import { SafeAreaView } from 'react-native-safe-area-context'; 
 
@@ -27,6 +27,7 @@ const DATA = [
 export default function App() {
   const [items, setItems] = useState(DATA);
   const [text, setText] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
   
   //function to add new one
   const addNewToDo = () => {
@@ -38,6 +39,7 @@ export default function App() {
 
     setItems([...items, newTodo]); // wrapping into new array for immutability
     setText(""); // clear the input field
+    setIsModalVisible(false); // close the modal
   }
 
   const markItemCompleted = (item) => {
@@ -58,10 +60,16 @@ export default function App() {
   return (
     // SafeAreaView is a wrapper for the view - to have the content go under the status bar
     <SafeAreaView style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <Button title='Add an item' onPress={() => setIsModalVisible(true)}/>
+      <Modal visible={isModalVisible} transparent={true} onRequestClose={() => setIsModalVisible(false)}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+          <TextInput style={styles.input} onChangeText={setText} value={text}/>
+          <Button title='Add Todo' onPress={addNewToDo}/>
+          </View>
+        </View>
+      </Modal>
       <StatusBar style="auto" />
-      <TextInput style={styles.input} onChangeText={setText} value={text}/>
-      <Button title='Add Todo' onPress={addNewToDo}/>
       <FlatList
       style={styles.list}
         data={items}
@@ -102,5 +110,26 @@ const styles = StyleSheet.create({
   itemTextCompleted:{
     color: '#FFFF',
     textDecorationLine: 'line-through'
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
   }
 });
