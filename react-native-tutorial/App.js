@@ -11,16 +11,19 @@ const DATA = [
     'id': '1',
     title: 'Mediation',
     completed: false,
+    color: '#EBC58C'
   },
   {
     'id': '2',
     title: 'Coding',
     completed: false,
+    color: '#6DB6DD'
   },
   {
     'id': '3',
     title: 'Journaling',
     completed: false,
+    color: '#BC96E6'
   }
 ]
 
@@ -36,6 +39,7 @@ export default function App() {
       id: items.length + 1,
       title: text,
       completed: false,
+      color: '#62B599'
     }
 
     setItems([...items, newTodo]); // wrapping into new array for immutability
@@ -53,19 +57,24 @@ export default function App() {
   }
 
   const TodoItem = (props) => (
-    <TouchableOpacity style={styles.item} onPress={() => markItemCompleted(props.item)}>
+    <TouchableOpacity style={[styles.item, { backgroundColor: props.item.color}]} onPress={() => markItemCompleted(props.item)}>
       <Text style={props.item.completed ? styles.itemTextCompleted : styles.itemText}>{props.item.title}</Text>
     </TouchableOpacity>
   )
 
-  return (
-    // SafeAreaView is a wrapper for the view - to have the content go under the status bar
-    <SafeAreaView style={styles.container}>
+  const renderAddButton = () => {
+    return (
       <TouchableOpacity onPress={() => setIsModalVisible(true)}>
         <View style={styles.icon}>
           <Ionicons name="add" size={24} color="#652E00"/>
         </View>
       </TouchableOpacity>
+    )
+  }
+
+  return (
+    // SafeAreaView is a wrapper for the view - to have the content go under the status bar
+    <SafeAreaView style={styles.container}>
       <Modal visible={isModalVisible} transparent={true} onRequestClose={() => setIsModalVisible(false)}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -80,6 +89,7 @@ export default function App() {
         data={items}
         renderItem={({item}) => <TodoItem item={item}/>}
         keyExtractor={item => item.id}
+        ListFooterComponent={renderAddButton}
       />
     </SafeAreaView>
   );
