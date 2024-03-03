@@ -3,23 +3,24 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, TextInput, Alert, Modal, FlatList, TouchableOpacity } from 'react-native';
 // using for Android - SafeAreaView within 'react-native' only works for iOS
 import { SafeAreaView } from 'react-native-safe-area-context'; 
-
+import { Ionicons } from '@expo/vector-icons';
+import { styles } from './App.style';
 
 const DATA = [
   {
     'id': '1',
     title: 'Mediation',
-    completed: false
+    completed: false,
   },
   {
     'id': '2',
     title: 'Coding',
-    completed: false
+    completed: false,
   },
   {
     'id': '3',
     title: 'Journaling',
-    completed: false
+    completed: false,
   }
 ]
 
@@ -34,7 +35,7 @@ export default function App() {
     let newTodo = {
       id: items.length + 1,
       title: text,
-      completed: false
+      completed: false,
     }
 
     setItems([...items, newTodo]); // wrapping into new array for immutability
@@ -60,7 +61,11 @@ export default function App() {
   return (
     // SafeAreaView is a wrapper for the view - to have the content go under the status bar
     <SafeAreaView style={styles.container}>
-      <Button title='Add an item' onPress={() => setIsModalVisible(true)}/>
+      <TouchableOpacity onPress={() => setIsModalVisible(true)}>
+        <View style={styles.icon}>
+          <Ionicons name="add" size={24} color="#652E00"/>
+        </View>
+      </TouchableOpacity>
       <Modal visible={isModalVisible} transparent={true} onRequestClose={() => setIsModalVisible(false)}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -79,57 +84,3 @@ export default function App() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  input: {
-    height: 40,
-    width: 200,
-    borderWidth: 1,
-    padding: 10,
-    borderColor: 'gray',
-  },
-  list:{
-    alignSelf: 'stretch',
-  },
-  item:{
-    backgroundColor: '#6DB6DD',
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    borderRadius: 10,
-  },
-  itemText:{
-    color: '#FFFF'
-  },
-  itemTextCompleted:{
-    color: '#FFFF',
-    textDecorationLine: 'line-through'
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22
-  }
-});
